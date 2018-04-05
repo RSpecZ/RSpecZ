@@ -1,5 +1,2 @@
-require "RShiyo/version"
-
-module RShiyo
-  # Your code goes here...
-end
+require 'RShiyo/version'
+require 'RShiyo/contexts'
