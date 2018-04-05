@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "RShiyo/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "RShiyo"
+  spec.name          = "rshio"
   spec.version       = RShiyo::VERSION
   spec.authors       = ["seteen"]
   spec.email         = ["app.zenn@gmail.com"]
