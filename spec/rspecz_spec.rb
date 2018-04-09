@@ -1,6 +1,6 @@
-RSpec.describe RShiyo do
+RSpec.describe RSpecZ do
   it "has a version number" do
-    expect(RShiyo::VERSION).not_to be nil
+    expect(RSpecZ::VERSION).not_to be nil
   end
 
   it "does something useful" do
