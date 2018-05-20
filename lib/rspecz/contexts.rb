@@ -63,7 +63,7 @@ module RSpec
           end
         end
 
-        def with_include_context(name, &block)
+        def with_context(name, &block)
           context "when include context(#{name})" do
             include_context name
             instance_eval(&block)
