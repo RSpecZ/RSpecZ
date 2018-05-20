@@ -12,9 +12,10 @@ module RSpec
           __each_if_method_not_defined(array) do |val|
             let(val) { "test-#{val}" }
           end
+          let(:with_nil) { false } unless __lib_method_defined?(:with_nil)
           let(:params) {
             array.each_with_object({}) do |elem, acc|
-              acc[elem] = send(elem) if send(elem).present?
+              acc[elem] = send(elem) if send(:with_nil) || send(elem).present?
             end
           }
         end
