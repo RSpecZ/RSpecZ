@@ -63,6 +63,13 @@ module RSpec
           end
         end
 
+        def with_include_context(name, &block)
+          include_context name
+          context "when include context(#{name})" do
+            instance_eval(&block)
+          end
+        end
+
         def array_contexts(*array, &block)
           array.each do |val|
             context "with #{val}" do
