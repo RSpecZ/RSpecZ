@@ -18,10 +18,10 @@ module RSpec
           end
         end
 
-        def value_context(name, value, &block)
-          context "when #{name} is #{value}" do
+        def value_context(name, value, description = nil, &block)
+          context description || "when #{name} is #{value}" do
             let(name) { value }
-            instance_eval(&block)
+            instance_exec(name, value, &block)
           end
         end
 
@@ -31,10 +31,10 @@ module RSpec
           end
         end
 
-        def invalid_context(name, value = 'invalid-value', &block)
-          context "when #{name} is not valid(#{value})" do
+        def invalid_context(name, value = 'invalid-value', description = nil, &block)
+          context description || "when #{name} is not valid(#{value})" do
             let(name) { value }
-            instance_eval(&block)
+            instance_exec(name, value, &block)
           end
         end
 
@@ -44,22 +44,22 @@ module RSpec
           end
         end
 
-        def block_context(name, &block)
-          continue_object = { name: name, block: block, myobject: self }
+        def block_context(name, description = nil, &block)
+          continue_object = { name: name, descrioption: description, block: block, myobject: self }
           def continue_object.spec(&block)
             continue_object = self
-            self[:myobject].context "when #{self[:name]} is different" do
+            self[:myobject].context self[:description] || "when #{self[:name]} is different" do
               let(continue_object[:name]) { instance_eval(&continue_object[:block]) }
-              instance_eval(&block)
+              instance_exec(name, &block)
             end
           end
           continue_object
         end
 
-        def nonexist_context(name, value, &block)
-          context "when #{name} is not exist(#{value})" do
+        def nonexist_context(name, value, description = nil, &block)
+          context description || "when #{name} is not exist(#{value})" do
             let(name) { value }
-            instance_eval(&block)
+            instance_evec(name, &block)
           end
         end
 
