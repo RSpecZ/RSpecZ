@@ -59,7 +59,7 @@ module RSpec
         def nonexist_context(name, value, description = nil, &block)
           context description || "when #{name} is not exist(#{value})" do
             let(name) { value }
-            instance_evec(name, &block)
+            instance_exec(name, &block)
           end
         end
 
