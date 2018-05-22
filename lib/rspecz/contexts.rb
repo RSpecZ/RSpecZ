@@ -5,10 +5,10 @@ module RSpec
         # TODO: あとで綺麗にリファクタリングする
         # TODO: contexts のときに配列が空だったらエラーが出るようにする
 
-        def nil_context(name, &block)
-          context "when #{name} is nil" do
+        def nil_context(name, description = nil, &block)
+          context description || "when #{name} is nil" do
             let(name) { nil }
-            instance_eval(&block)
+            instance_exec(name, &block)
           end
         end
 
