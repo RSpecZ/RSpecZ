@@ -35,6 +35,13 @@ module RSpec
         end
         alias_method :value_contexts, :set_values
 
+        def set_valid(name, value, description = nil, &block)
+          context description || "when #{name} is valid(#{value})" do
+            let(name) { value }
+            instance_exec(name, value, &block)
+          end
+        end
+
         def set_invalid(name, value = 'invalid-value', description = nil, &block)
           context description || "when #{name} is not valid(#{value})" do
             let(name) { value }
