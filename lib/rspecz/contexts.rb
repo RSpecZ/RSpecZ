@@ -5,46 +5,59 @@ module RSpec
         # TODO: あとで綺麗にリファクタリングする
         # TODO: contexts のときに配列が空だったらエラーが出るようにする
 
-        def nil_context(name, description = nil, &block)
+        def set_nil(name, description = nil, &block)
           context description || "when #{name} is nil" do
             let(name) { nil }
             instance_exec(name, &block)
           end
         end
+        alias_method :nil_context, :set_nil
 
-        def nil_contexts(*names, &block)
+        def set_nils(*names, &block)
           names.each do |name|
             nil_context(name, &block)
           end
         end
+        alias_method :nil_contexts, :set_nils
 
-        def value_context(name, value, description = nil, &block)
+        def set(name, value, description = nil, &block)
           context description || "when #{name} is #{value}" do
             let(name) { value }
             instance_exec(name, value, &block)
           end
         end
+        alias_method :value_context, :set
 
-        def value_contexts(name, *values, &block)
+        def set_values(name, *values, &block)
           values.each do |value|
             value_context(name, value, &block)
           end
         end
+        alias_method :value_contexts, :set_values
 
-        def invalid_context(name, value = 'invalid-value', description = nil, &block)
-          context description || "when #{name} is not valid(#{value})" do
+        def set_valid(name, value, description = nil, &block)
+          context description || "when #{name} is valid(#{value})" do
             let(name) { value }
             instance_exec(name, value, &block)
           end
         end
 
-        def invalid_contexts(name, *values, &block)
+        def set_invalid(name, value = 'invalid-value', description = nil, &block)
+          context description || "when #{name} is not valid(#{value})" do
+            let(name) { value }
+            instance_exec(name, value, &block)
+          end
+        end
+        alias_method :invalid_context, :set_invalid
+
+        def set_invalids(name, *values, &block)
           values.each do |value|
             invalid_context(name, value, &block)
           end
         end
+        alias_method :invalid_contexts, :set_invalids
 
-        def block_context(name, description = nil, &block)
+        def set_block(name, description = nil, &block)
           continue_object = { name: name, descrioption: description, block: block, myobject: self }
           def continue_object.spec(&block)
             continue_object = self
@@ -55,28 +68,23 @@ module RSpec
           end
           continue_object
         end
+        alias_method :block_context, :set_block
 
-        def nonexist_context(name, value, description = nil, &block)
+        def set_missing(name, value, description = nil, &block)
           context description || "when #{name} is not exist(#{value})" do
             let(name) { value }
             instance_exec(name, &block)
           end
         end
+        alias_method :nonexist_context, :set_missing
 
-        def with_context(name, &block)
+        def set_context(name, &block)
           context "when include context(#{name})" do
             include_context name
             instance_eval(&block)
           end
         end
-
-        def array_contexts(*array, &block)
-          array.each do |val|
-            context "with #{val}" do
-              instance_exec val, &block
-            end
-          end
-        end
+        alias_method :with_context, :set_context
       end
     end
   end
