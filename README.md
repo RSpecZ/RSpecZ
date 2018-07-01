@@ -2,7 +2,7 @@
 
 RSpecZ is a powerful extension for RSpec with strong and straightforward syntaxes.
 With RSpecZ you can handle different contexts with only a single line of code.
-RSpecZ also provides a number of aliases to improve the readability of RSpec codes.
+RSpecZ also provides a number of aliases to improve the readability of RSpec code.
 
 ## Installation
 
@@ -19,6 +19,28 @@ And then execute:
 Or install it yourself as:
 
     $ gem install RSpecZ
+
+## Features
+
+### Context
+
+This is one of the most powerful features in RSpecZ.
+RSpecZ has a number of context-related methods that can automatically
+generate context descriptions for you.
+You can also use methods like `set_values` to assign different values to a variable without writing multiple lines of code in your test.
+
+### Let
+
+RSpecZ provides variable assignment methods like `crate_params` and `strings`, which allows you to create complex variables in only one line of code.
+
+### Subject
+
+RSpecZ also provides subject-related methods to simplify your code when you test subjects.
+
+### Alias
+
+To improve the readability of your test code, RSpecZ provides aliases such as `make` and `behave`. These aliases can help to greatly simplify your code and make them easier to review.
+
 
 ## Usage
 
