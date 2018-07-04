@@ -71,7 +71,7 @@ module RSpec
         alias_method :block_context, :set_block
 
         def set_missing(name, value = 'missing-value', description = nil, &block)
-          context description || "when #{name} is not exist(#{value})" do
+          context description || "when #{name} does not exist(#{value})" do
             let(name) { value }
             instance_exec(name, &block)
           end
