@@ -25,7 +25,7 @@ You can also use methods like `set_values` to assign different values to a varia
 
 ### Let
 
-RSpecZ provides variable assignment methods like `crate_params` and `strings`, which allows you to create complex variables in only one line of code.
+RSpecZ provides variable assignment methods like `create_params` and `strings`, which allows you to create complex variables in only one line of code.
 
 ### Subject
 
