@@ -15,7 +15,7 @@ module RSpec
           let(:with_nil) { false } unless __lib_method_defined?(:with_nil)
           let(:params) {
             array.each_with_object({}) do |elem, acc|
-              acc[elem] = send(elem) if send(:with_nil) || send(elem).present?
+              acc[elem] = send(elem) if send(:with_nil) || !send(elem).nil?
             end
           }
         end
