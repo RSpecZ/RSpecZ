@@ -96,8 +96,8 @@ module RSpec
               start_index = [bracket_start, do_start].min + start_word.length
               next_end = 1
               loop do
-                next_start = text[start_index..-1].index(start_word) || test.length
-                next_end = text[start_index..-1].index(end_word) || test.length
+                next_start = text[start_index..-1].index(start_word) || text.length
+                next_end = text[start_index..-1].index(end_word) || text.length
                 break if next_end < next_start
               end
               text[start_index...start_index+next_end].split("\n").last.strip
