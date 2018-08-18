@@ -3,7 +3,7 @@ module RSpec
     module MemoizedHelpers
       module ClassMethods
         class WithContext
-          attr_accessor :name, :values, :description, :hint, :focused, :block, :myobject
+          attr_accessor :name, :values, :description, :hint, :focused, :block, :myobject, :and_name, :and_block
 
           def initialize(name, values, block, myobject)
             @name, @values, @block, @myobject = name, values, block, myobject
@@ -22,6 +22,13 @@ module RSpec
             @focused = true
           end
 
+          def and(name, &block)
+            raise RuntimeError.new('You cannot set and two times! "and" method can use only one time in single with method.') unless @and_block.nil?
+            @and_name = name
+            @and_block = block
+            self
+          end
+
           def so(&block)
             continue_object = self
             continue_object_block = @block
@@ -30,10 +37,19 @@ module RSpec
               raise RuntimeError.new("Syntax error you cannot set description by 'desc' method when you have multiple values set.") if @values.length > 1 && @description
               @values.each do |value|
                 context_text = @hint ? "when #{@name} is #{@hint}(#{value})" : "when #{@name} is #{value}"
-                spec = lambda do
+
+                spec_without_and = lambda do
                   let(continue_object.name) { value }
                   instance_exec(value, &block)
                 end
+
+                spec = @and_block.nil? ? spec_without_and : lambda do
+                  context "and #{continue_object.and_name} is #{continue_object.__get_description(continue_object.and_block.source, 'and')}" do
+                    let(continue_object.and_name) { instance_eval(&continue_object.and_block) }
+                    instance_exec(&spec_without_and)
+                  end
+                end
+
                 if @focused
                   @myobject.fcontext(context_text, &spec)
                 else
@@ -41,7 +57,9 @@ module RSpec
                 end
               end
             else
-              spec = lambda do
+              context_text = @name ? "when #{@name} is #{__get_description(@block.source, 'with')}" : "prepare #{__get_description(@block.source, 'with')}"
+
+              spec_without_and = lambda do
                 if continue_object.name
                   let(continue_object.name) { instance_eval(&continue_object_block) }
                 else
@@ -50,11 +68,42 @@ module RSpec
                 instance_exec(&block)
               end
 
-              if @focused
-                @myobject.fcontext(@description || "when #{@name} is different", &spec)
-              else
-                @myobject.context(@description || "when #{@name} is different", &spec)
+              spec = @and_block.nil? ? spec_without_and : lambda do
+                context "and #{continue_object.and_name} is #{continue_object.__get_description(continue_object.and_block.source, 'and')}" do
+                  let(continue_object.and_name) { instance_eval(&continue_object.and_block) }
+                  instance_exec(&spec_without_and)
+                end
               end
+
+              if @focused
+                @myobject.fcontext(@description || context_text, &spec)
+              else
+                @myobject.context(@description || context_text, &spec)
+              end
+            end
+          end
+
+          # TODO: This method is temporary method. Need to implement proper logic in future .
+          def __get_description(text, method_name)
+            begin
+              text = text[text.index("#{method_name}")..-1]
+              bracket_start = text.index('{') || text.length
+              do_start = text.index('do') || text.length
+
+              start_word = bracket_start < do_start ? '{' : 'do'
+              end_word = start_word == '{' ? '}' : 'end'
+
+              start_index = [bracket_start, do_start].min + start_word.length
+              next_end = 1
+              loop do
+                next_start = text[start_index..-1].index(start_word) || test.length
+                next_end = text[start_index..-1].index(end_word) || test.length
+                break if next_end < next_start
+              end
+              text[start_index...start_index+next_end].split("\n").last.strip
+            rescue
+              p 'Warning: rspecz with __get_description failed...'
+              'different'
             end
           end
         end
