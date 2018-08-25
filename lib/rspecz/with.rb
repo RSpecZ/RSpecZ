@@ -45,7 +45,10 @@ module RSpec
 
                 spec = @and_block.nil? ? spec_without_and : lambda do
                   context "and #{continue_object.and_name} is #{continue_object.__get_description(continue_object.and_block.source, 'and')}" do
-                    let(continue_object.and_name) { instance_eval(&continue_object.and_block) }
+                    let(continue_object.and_name) do
+                      @super = super() if defined? super
+                      instance_eval(&continue_object.and_block)
+                    end
                     instance_exec(&spec_without_and)
                   end
                 end
@@ -61,7 +64,10 @@ module RSpec
 
               spec_without_and = lambda do
                 if continue_object.name
-                  let(continue_object.name) { instance_eval(&continue_object_block) }
+                  let(continue_object.name) do
+                    @super = super() if defined? super
+                    instance_eval(&continue_object_block)
+                  end
                 else
                   before { instance_eval(&continue_object_block) }
                 end
