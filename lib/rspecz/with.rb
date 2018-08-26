@@ -100,14 +100,21 @@ module RSpec
               end_word = start_word == '{' ? '}' : 'end'
 
               start_index = [bracket_start, do_start].min + start_word.length
+              inline_bracket_start = start_index
               next_end = 1
+              start_word_count = 0
+
               loop do
-                next_start = text[start_index..-1].index(start_word) || text.length
-                next_end = text[start_index..-1].index(end_word) || text.length
-                break if next_end < next_start
+                next_end = text[inline_bracket_start..-1].index(end_word) || text.length
+                start_word_count += text[inline_bracket_start..inline_bracket_start+next_end].scan(start_word).length
+                start_word_count -= 1
+                # binding.pry
+                break if start_word_count < 0
+                inline_bracket_start += next_end + 1
               end
-              text[start_index...start_index+next_end].split("\n").last.strip
-            rescue
+
+              text[start_index...inline_bracket_start+next_end].split("\n").last.strip
+            rescue => e
               p 'Warning: rspecz with __get_description failed...'
               'different'
             end
