@@ -40,12 +40,12 @@ To improve the readability of your test code, RSpecZ provides aliases such as `m
 
 ### context
 
-#### set
+#### with(name, value)
 
-You can use `set` to set value to a variable, and execute the specified block:
+You can use `with` to set value to a variable, and execute the specified block:
 
 ```
-set(name, value) { my_block }
+with(name, value).so { my_block }
 ```
 
 This will automatically create context description for you based on the name and value you specified, like this:
@@ -62,29 +62,19 @@ In the example above, `value` is assigned to `name` and the specified block will
 You can also specify your own description:
 
 ```
-set(name, value, 'my_context_description') { my_block }
+with(name, value).desc('my_context_description').so { my_block }
 ```
 
-or provide a multiple-line block:
+#### with(name, *values)
 
-```
-set(name, value) do
-  # do something
-  # ...
-  # do more things
-end  
-```
-
-#### set_values
-
-`set_values` allows you to assign multiple values to a variable in only one line of code,
+`with` allows you to assign multiple values to a variable in only one line of code,
 it also creates context for each value, for example:
 
 ```
-set_values(:age, 20, 30) { my_block }
+with(:age, 20, 30).so { my_block }
 ```
 
-This equals to:
+This is equals to:
 
 ```
 context "when age is 20" do
@@ -98,94 +88,92 @@ context "when age is 30" do
 end
 ```
 
-Same as `set`, you can pass your own context description, or even do not pass a block.
+Using multiple values don't allow you to set your own context description.
 
-#### set_nil
+If you want to set description, you should write `with(name, value)` multiple times.
 
-Similar to `set`, but you do not have to specify the value because it will be set to `nil` automatically, for example:
+#### with(name) { value }
 
-```
-set_nil(name) { my_block }
-```
+`with` also allow you to assign block value to a variable.
 
-will generate the code like this:
+You can use dynamic values like `FactoryBot`.
 
 ```
-context "when #{name} is nil" do
-  let(name) { nil }
+with(:person) { create(:person) }.so { my_block }
+```
+
+This is equals to:
+
+```
+context "when person is create(:person)" do
+  let(:person) { create(:person) }
+   my_block
+end
+```
+
+`with` with block produce description from your block source, so you can know what kind of context it is.
+
+#### `and`
+
+Each `with` method can chain `and` method.
+
+If you want to set another variable for spec, you can set additional variable with `and` method.
+
+```
+with(:name, 'test').and(:age) { 10 }.so { my_block }
+```
+
+This is equals to:
+
+```
+context 'when name is test and age is 10' do
+  let(:name) { 'test' }
+  let(:age) { 10 }
   my_block
 end
 ```
 
-#### set_nils
+#### with_nil(*variables)
 
-This the plural version of `set_nil`,
-it allows you to assign `nil` to each variable (while others remain the default value?) and creates context descriptions for each value.
-
-
-#### set_valid
-
-Same as `set`, except that the context description will point out that the value is valid:
+`with_nil` is a specific method to set nil to variables.
 
 ```
-context "when #{name} is valid(#{value})" do
-  let(name) { value }
-  my_block
+with_nil(:name, :age, :phone_number).so { my_block }
+```
+
+This is equals to:
+
+```
+%i[name age phone_number].each do |variable|
+  context "when #{variable} is nil" do
+    let(variable) { nil }
+    my_block
+  end
 end
 ```
 
-### set_invalid
 
-Same as `set`, except that the context description will point out that the value is invalid:
+### valid, invalid, missing
 
-```
-context "when #{name} is not valid(#{value})" do
-  let(name) { value }
-  my_block
-end
-```
+`with` method doesn't provide any information about what kind of spec it is.
 
-#### set_invalids
+RSpecZ has `with_valid` , `with_invalid` , `with_missing` provide spec information by method name.
 
-The plural version of `set_invalid`,
-it allows you to assign multiple invalid values to the variable,
-and creates proper context descriptions for each invalid value.
+You can use these method to make specs review easy.
 
-```
-context "when #{name} is not valid(#{value1})" do
-  let(name) { value }
-  my_block
-end
 
-context "when #{name} is not valid(#{value2})" do
-  let(name) { value }
-  my_block
-end
-```
+### super in with method
 
-This is extremely useful when you do value checking like emails:
+RSpec's `super` in `let` cannot be used in RSpecZ.
+
+RSpecZ has `_super` method for this.
+
+You can use `_super` like this.
 
 ```
-set_invalids(:email, 'user@example', 'user.example.com') { # invalid email address }
-```
+let(:name) { 'test' }
 
-#### set_block
-
-Similar to `set`, but `set_block` also allows you to assign a variable with block:
-
-```
-set_block(:user) { create(:user, name: 'Alan', age: 20) }.spec { my_block }
-```
-
-### set_missing
-
-Similar to `set`, except that the context description will point out that the value does not exist:
-
-```
-context "when #{name} does not exist(#{value})" do
-  let(name) { value }
-  my_block
-end
+with(:name) { _super + '10' }.so { my_block }
 ```
 
 #### set_context
