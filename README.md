@@ -4,6 +4,11 @@ RSpecZ is a powerful extension for RSpec with strong and straightforward syntaxe
 With RSpecZ you can handle different contexts with only a single line of code.
 RSpecZ also provides a number of aliases to improve the readability of RSpec code.
 
+## Effect of RSpecZ
+
+![image](https://user-images.githubusercontent.com/10380303/46996479-c60e8380-d157-11e8-9c8a-58ca1012e2ed.png)
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
