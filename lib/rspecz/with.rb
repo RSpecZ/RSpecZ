@@ -30,6 +30,10 @@ module RSpec
           end
 
           def so(&block)
+            root_context = @myobject.send(:root_context)
+            so_count = root_context.metadata[RSpecZ::METADATA_SO_COUNT]
+            root_context.metadata[RSpecZ::METADATA_SO_COUNT] = so_count == nil ? 1 : so_count + 1;
+
             continue_object = self
             continue_object_block = @block
             # TODO: create description from block.source
@@ -157,6 +161,8 @@ module RSpec
         private
 
         def _with(name, hint, focused, values, block)
+          count_up_with_count
+
           with_context = WithContext.new(name, values, block, self)
           with_context.hint(hint) if hint
           with_context.focused if focused
@@ -165,6 +171,7 @@ module RSpec
 
         def _with_nil(names, focused)
           raise RuntimeError.new("Argument Error. You should set names.") if names.nil? || names.length == 0
+          count_up_with_count
 
           continue_object = { names: names, focused: focused, myobject: self }
 
@@ -173,6 +180,10 @@ module RSpec
           end
 
           def continue_object.so(&block)
+            root_context = self[:myobject].send(:root_context)
+            so_count = root_context.metadata[RSpecZ::METADATA_SO_COUNT]
+            root_context.metadata[RSpecZ::METADATA_SO_COUNT] = so_count == nil ? 1 : so_count + 1;
+
             continue_object = self
             continue_object[:names].each do |name|
               spec = lambda do
@@ -187,6 +198,19 @@ module RSpec
             end
           end
           continue_object
+        end
+
+        def count_up_with_count
+          with_count = root_context.metadata[RSpecZ::METADATA_WITH_COUNT]
+          root_context.metadata[RSpecZ::METADATA_WITH_COUNT] = with_count == nil ? 1 : with_count + 1
+        end
+
+        def root_context
+          current = self
+          # RSpec module describe how deep context is. So, minimum module class is the root context
+          current.parent_groups.min do |a,b|
+            a.ancestors.length <=> b.ancestors.length
+          end
         end
       end
     end

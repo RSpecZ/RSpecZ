@@ -1,5 +1,5 @@
 RSpec.describe RSpecZ do
-  it { expect(RSpecZ::VERSION).to eq "0.1.1" }
+  it { expect(RSpecZ::VERSION).to eq '0.1.2' }
 
   set_valid(:bool, true) do
     it { expect(bool).to be_truthy }
