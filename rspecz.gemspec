@@ -6,11 +6,11 @@ require "rspecz/version"
 Gem::Specification.new do |spec|
   spec.name          = "rspecz"
   spec.version       = RSpecZ::VERSION
-  spec.authors       = ["seteen"]
+  spec.authors       = ["yazumoto"]
   spec.email         = ["app.zenn@gmail.com"]
 
   spec.summary       = %q{Provide functions for smart RSpec.}
-  spec.homepage      = "https://github.com/seteen/RSpecZ"
+  spec.homepage      = "https://github.com/RSpecZ/RSpecZ"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
